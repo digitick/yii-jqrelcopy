@@ -23,27 +23,19 @@
 
 (function($) {
 
-	// to count IDs
-	var idCounter = 1;
-
-	// create an ID suitable for a new insert in the DB
-	function getIdCount(c){
-		return Array(c+1).join("0");
-	}
-
 	// Clear names on elements to reflect the fact they will need insertion to
 	// the DB
-	function resetName(element){
+	function resetName(element, counter) {
 		var re = new RegExp(/\[\d+\](?=\[)/);
-		return element.attr('name').replace(re, "[" + getIdCount(idCounter) + "]");
+		return element.attr('name').replace(re, "[" + counter + "]");
 	}
 	
 	// Clear ids on elements to reflect the fact they will need insertion to
 	// the DB
-	function resetId(element, counter){
+	function resetId(element, counter) {
 		var re = new RegExp(/_\d/);
 		if (element.attr('id').match(re)){
-			return element.attr('id').replace(re, "_" + getIdCount(idCounter));
+			return element.attr('id').replace(re, "_" + counter);
 		}
 		else {
 			return element.attr('id') + (counter +1);
@@ -75,7 +67,6 @@
 
 				var rel = $(this).attr('rel'); // rel in jquery selector format
 				var counter = $(rel).length;
-				idCounter++;
 
 				// stop limit
 				if (settings.limit != 0 && counter >= settings.limit){
@@ -131,11 +122,11 @@
 
 				// Increment Clone names
 				if ( $(clone).attr('name') ){
-					$(clone).attr('name', resetName($(clone)));
+					$(clone).attr('name', resetName($(clone), counter));
 				};
 				// Increment Clone Children names
 				$(clone).find('[name]').each(function(){
-					$(this).attr('name', resetName($(this)));
+					$(this).attr('name', resetName($(this), counter));
 				});
 				
 				funcAfterNewId.call();
@@ -147,6 +138,8 @@
 						var type = $(this).attr('type');
 						switch(type)
 						{
+                            case "radio":
+                                break;
 							case "button":
 								break;
 							case "reset":
